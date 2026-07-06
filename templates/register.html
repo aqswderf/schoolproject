@@ -34,10 +34,7 @@
                     <label for="grade">Класс</label>
                     <select id="grade" name="grade" required>
                         <option value="">Выбери класс</option>
-                        <option value="9А">9А</option>
-                        <option value="9Б">9Б</option>
-                        <option value="10А">10А</option>
-                        <option value="11А">11А</option>
+                        <option value="10Т">10Т</option>
                     </select>
                 </div>
 
@@ -106,7 +103,7 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    document.getElementById('successMessage').textContent = `Привет, ${result.student.fullname}! Твой уникальный ID: ${result.student.student_id}`;
+                    document.getElementById('successMessage').textContent = `Привет, ${result.student.fullname}! Твой QR-код готов`;
                     document.getElementById('displayName').textContent = result.student.fullname;
                     document.getElementById('displayEmail').textContent = result.student.email;
                     document.getElementById('displayPhone').textContent = result.student.phone;
