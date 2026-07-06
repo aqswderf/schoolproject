@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - SchoolProject</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <a href="/" class="back-link">← Назад</a>
+            
+            <h2>📝 Регистрация</h2>
+            <p>Введи свои данные для регистрации</p>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="fullname">Полное имя</label>
+                    <input type="text" id="fullname" name="fullname" placeholder="Иван Петров" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="ivan@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Номер телефона</label>
+                    <input type="tel" id="phone" name="phone" placeholder="+7 (999) 123-45-67" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="grade">Класс</label>
+                    <select id="grade" name="grade" required>
+                        <option value="">Выбери класс</option>
+                        <option value="9А">9А</option>
+                        <option value="9Б">9Б</option>
+                        <option value="10А">10А</option>
+                        <option value="11А">11А</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+            </form>
+        </div>
+
+        <!-- Окно с QR-кодом -->
+        <div id="successModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>✅ Регистрация успешна!</h2>
+                <p id="successMessage"></p>
+                
+                <div class="qr-display">
+                    <h3>Твой личный QR-код:</h3>
+                    <div id="qrImage"></div>
+                    <p class="qr-hint">Отсканируй этот код для проверки посещаемости</p>
+                </div>
+
+                <div class="student-info">
+                    <p><strong>Имя:</strong> <span id="displayName"></span></p>
+                    <p><strong>Email:</strong> <span id="displayEmail"></span></p>
+                    <p><strong>Телефон:</strong> <span id="displayPhone"></span></p>
+                    <p><strong>Класс:</strong> <span id="displayGrade"></span></p>
+                </div>
+
+                <a href="/" class="btn btn-primary">На главную</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('successModal');
+        const closeBtn = document.querySelector('.close');
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                fullname: document.getElementById('fullname').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                grade: document.getElementById('grade').value
+            };
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('successMessage').textContent = `Привет, ${result.student.fullname}! Твой уникальный ID: ${result.student.student_id}`;
+                    document.getElementById('displayName').textContent = result.student.fullname;
+                    document.getElementById('displayEmail').textContent = result.student.email;
+                    document.getElementById('displayPhone').textContent = result.student.phone;
+                    document.getElementById('displayGrade').textContent = result.student.grade;
+                    
+                    document.getElementById('qrImage').innerHTML = `<img src="${result.qr_code}" alt="QR Code" style="width: 250px; height: 250px;">`;
+                    
+                    modal.style.display = 'block';
+                    document.getElementById('registerForm').reset();
+                } else {
+                    alert('❌ Ошибка: ' + result.message);
+                }
+            } catch (error) {
+                alert('❌ Ошибка сервера: ' + error);
+            }
+        });
+    </script>
+</body>
+</html>

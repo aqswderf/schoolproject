@@ -1,0 +1,368 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+}
+
+.back-link {
+    display: inline-block;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.back-link:hover {
+    transform: translateX(-5px);
+}
+
+.logo {
+    text-align: center;
+    color: white;
+    margin-bottom: 40px;
+}
+
+.logo h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.logo p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.content {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.content h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.content p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-container, .scan-container {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.form-container h2, .scan-container h2 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.form-container > p, .scan-container > p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+    margin: 10px 5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+    width: 100%;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    width: auto;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: white;
+    margin: 5% auto;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    animation: slideIn 0.3s;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.modal-content h2 {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.qr-display {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.qr-display h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.qr-display img {
+    border: 3px solid #667eea;
+    border-radius: 10px;
+}
+
+.qr-hint {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 15px;
+}
+
+.student-info {
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.student-info p {
+    color: #555;
+    margin: 8px 0;
+    font-size: 0.95rem;
+}
+
+.student-info strong {
+    color: #333;
+}
+
+.camera-section {
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    max-height: 400px;
+}
+
+#video {
+    display: block;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.manual-input {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.manual-input h3 {
+    color: #333;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    transition: border-color 0.3s;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.scan-result {
+    background: #d4edda;
+    border: 2px solid #28a745;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.result-content h3 {
+    color: #155724;
+    margin-bottom: 10px;
+}
+
+.result-content p {
+    color: #155724;
+    margin-bottom: 15px;
+}
+
+.details-box {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    text-align: left;
+}
+
+.details-box p {
+    color: #555;
+    margin: 8px 0;
+    font-size: 0.95rem;
+}
+
+.permission-request {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+.permission-request p {
+    color: #856404;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 600px) {
+    .modal-content {
+        width: 95%;
+        margin: 20% auto;
+        padding: 30px 20px;
+    }
+
+    .qr-display img {
+        max-width: 200px;
+    }
+
+    .logo h1 {
+        font-size: 2rem;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        margin: 8px 5px;
+    }
+}

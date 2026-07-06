@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сканирование QR-кода - SchoolProject</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="scan-container">
+            <a href="/" class="back-link">← Назад</a>
+            
+            <h2>📱 Сканирование QR-кода</h2>
+            <p>Используй камеру для сканирования QR-кода ученика</p>
+
+            <div class="camera-section">
+                <video id="video" width="100%" height="auto" playsinline></video>
+                <canvas id="canvas" style="display: none;"></canvas>
+            </div>
+
+            <div class="manual-input">
+                <h3>Или введи ID вручную:</h3>
+                <input type="text" id="manualStudentId" placeholder="Введи ID ученика" class="input-field">
+                <button onclick="scanManually()" class="btn btn-primary">Проверить</button>
+            </div>
+
+            <div id="scanResult" class="scan-result" style="display: none;">
+                <div class="result-content">
+                    <h3 id="resultTitle"></h3>
+                    <p id="resultMessage"></p>
+                    <div id="resultDetails"></div>
+                    <button onclick="resetScan()" class="btn btn-secondary">Сканировать ещё</button>
+                </div>
+            </div>
+
+            <div id="cameraPermission" class="permission-request" style="display: none;">
+                <p>🔒 Требуется доступ к камере</p>
+                <button onclick="requestCameraPermission()" class="btn btn-primary">Разрешить доступ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        let isScanning = true;
+
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
+                });
+                video.srcObject = stream;
+                video.play();
+                scanQRCode();
+            } catch (error) {
+                console.error('Ошибка доступа к камере:', error);
+                document.getElementById('cameraPermission').style.display = 'block';
+            }
+        }
+
+        function requestCameraPermission() {
+            startCamera();
+        }
+
+        function scanQRCode() {
+            if (!isScanning || !video.videoWidth) {
+                requestAnimationFrame(scanQRCode);
+                return;
+            }
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+            if (code) {
+                processScannedCode(code.data);
+                isScanning = false;
+                return;
+            }
+
+            requestAnimationFrame(scanQRCode);
+        }
+
+        async function processScannedCode(studentId) {
+            try {
+                const response = await fetch('/api/scan-qr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ student_id: studentId })
+                });
+
+                const result = await response.json();
+                showResult(response.ok, result);
+            } catch (error) {
+                showResult(false, { message: 'Ошибка сервера: ' + error });
+            }
+        }
+
+        async function scanManually() {
+            const studentId = document.getElementById('manualStudentId').value;
+            
+            if (!studentId.trim()) {
+                alert('❌ Введи ID ученика');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/scan-qr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ student_id: studentId })
+                });
+
+                const result = await response.json();
+                showResult(response.ok, result);
+            } catch (error) {
+                showResult(false, { message: 'Ошибка сервера: ' + error });
+            }
+        }
+
+        function showResult(success, data) {
+            const resultDiv = document.getElementById('scanResult');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultMessage = document.getElementById('resultMessage');
+            const resultDetails = document.getElementById('resultDetails');
+
+            if (success) {
+                resultTitle.textContent = '✅ Успешно!';
+                resultMessage.textContent = data.message;
+                resultDetails.innerHTML = `
+                    <div class="details-box">
+                        <p><strong>Имя:</strong> ${data.student.fullname}</p>
+                        <p><strong>Класс:</strong> ${data.student.grade}</p>
+                        <p><strong>Email:</strong> ${data.student.email}</p>
+                        <p><strong>Время сканирования:</strong> ${new Date().toLocaleString('ru-RU')}</p>
+                    </div>
+                `;
+                resultDiv.style.backgroundColor = '#d4edda';
+                resultDiv.style.borderColor = '#28a745';
+            } else {
+                resultTitle.textContent = '❌ Ошибка';
+                resultMessage.textContent = data.message;
+                resultDetails.innerHTML = '';
+                resultDiv.style.backgroundColor = '#f8d7da';
+                resultDiv.style.borderColor = '#f5c6cb';
+            }
+
+            resultDiv.style.display = 'block';
+            video.style.opacity = '0.3';
+            document.querySelector('.manual-input').style.opacity = '0.3';
+        }
+
+        function resetScan() {
+            document.getElementById('scanResult').style.display = 'none';
+            document.getElementById('manualStudentId').value = '';
+            video.style.opacity = '1';
+            document.querySelector('.manual-input').style.opacity = '1';
+            isScanning = true;
+            scanQRCode();
+        }
+
+        window.addEventListener('load', startCamera);
+
+        window.addEventListener('beforeunload', () => {
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+        });
+    </script>
+</body>
+</html>

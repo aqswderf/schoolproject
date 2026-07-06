@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SchoolProject - Главная</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🎓 SchoolProject</h1>
+            <p>Система регистрации и сканирования QR-кодов</p>
+        </div>
+
+        <div class="content">
+            <h2>Добро пожаловать!</h2>
+            <p>Выбери действие:</p>
+            
+            <div class="button-group">
+                <a href="/register" class="btn btn-primary">📝 Зарегистрироваться</a>
+                <a href="/scan" class="btn btn-secondary">📱 Сканировать QR-код</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
