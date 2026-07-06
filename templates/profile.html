@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой профиль - SchoolProject</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="profile-container">
+            <div class="profile-header">
+                <h2>👤 Мой профиль</h2>
+                <a href="/logout" class="btn btn-danger">Выйти</a>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-info">
+                    <p><strong>Имя:</strong> <span id="name">Загрузка...</span></p>
+                    <p><strong>Email:</strong> <span id="email">Загрузка...</span></p>
+                    <p><strong>Телефон:</strong> <span id="phone">Загрузка...</span></p>
+                    <p><strong>Класс:</strong> <span id="grade">Загрузка...</span></p>
+                    <p><strong>ID ученика:</strong> <span id="student_id">Загрузка...</span></p>
+                </div>
+
+                <div class="qr-code-section">
+                    <h3>📲 Твой QR-код</h3>
+                    <div id="qrcode"></div>
+                    <p class="qr-text">Этот код присвоен тебе при регистрации</p>
+                </div>
+            </div>
+
+            <div class="school-services">
+                <h3>📚 Школьные сервисы</h3>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <h4>📅 Расписание</h4>
+                        <p>Смотри расписание уроков</p>
+                        <a href="/schedule" class="btn btn-small">Открыть</a>
+                    </div>
+                    <div class="service-card">
+                        <h4>⭐ Оценки</h4>
+                        <p>Проверь свои оценки</p>
+                        <a href="/grades" class="btn btn-small">Открыть</a>
+                    </div>
+                    <div class="service-card">
+                        <h4>📝 Домашние задания</h4>
+                        <p>Смотри ДЗ на уроки</p>
+                        <a href="/homework" class="btn btn-small">Открыть</a>
+                    </div>
+                    <div class="service-card">
+                        <h4>📢 Объявления</h4>
+                        <p>Важные новости школы</p>
+                        <a href="/announcements" class="btn btn-small">Открыть</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        // Загрузка данных профиля
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/profile');
+                const data = await response.json();
+
+                document.getElementById('name').textContent = data.fullname;
+                document.getElementById('email').textContent = data.email;
+                document.getElementById('phone').textContent = data.phone;
+                document.getElementById('grade').textContent = data.grade;
+                document.getElementById('student_id').textContent = data.student_id;
+
+                // Генерируем QR-код
+                new QRCode(document.getElementById('qrcode'), {
+                    text: data.student_id,
+                    width: 200,
+                    height: 200
+                });
+            } catch (error) {
+                alert('❌ Ошибка загрузки профиля: ' + error);
+            }
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>
